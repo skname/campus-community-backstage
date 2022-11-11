@@ -14,3 +14,11 @@ Since TypeScript cannot handle type information for `.vue` imports, they are shi
 2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
 
 You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+
+
+
+# 导入 vue 组件 报错，提示没有默认导出
+Vetur 插件报错
+改用 Volar 解决问题
+
+# 导入使用别名导入 ts 文件错误
