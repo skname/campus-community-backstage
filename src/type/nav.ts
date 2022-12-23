@@ -1,7 +1,7 @@
 export interface NavMenuList {
   id: number;
   name: string;
-  url: string;
+  path: string;
 }
 export interface NavTabList {
   id: number;

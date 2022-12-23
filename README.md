@@ -1,24 +1,9 @@
-# Vue 3 + TypeScript + Vite
+# vite 使用记录
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+### .env 文件
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
-
-## Type Support For `.vue` Imports in TS
-
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
-
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
-
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
-
-
-
-# 导入 vue 组件 报错，提示没有默认导出
-Vetur 插件报错
-改用 Volar 解决问题
-
-# 导入使用别名导入 ts 文件错误
+1. `.env` 文件任何情况下都会加载
+2. `.env.local` 在所有模式下都会被加载，但会被 git 忽略
+3. `.env.[mode]` 文件只在指定模式下加载
+4. 只有使用 `VITE_` 的变量才会暴露给 vite 代码
+5. 加载环境的变量通过 `import.meta.env` 传递给客户端。

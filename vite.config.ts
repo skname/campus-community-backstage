@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
@@ -14,12 +14,11 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
     }),
   ],
-  mode: "development",
   server: {
     port: 3030,
     proxy: {
       "/api": {
-        target: "",
+        target: "http://192.168.1.4",
       },
     },
   },
@@ -27,8 +26,15 @@ export default defineConfig({
   base: "/",
   resolve: {
     alias: {
-      "@view": "/src/view",
-      "@component": "/src/component",
+      "@": "/src",
+      "@/view": "/src/view",
+      "@/component": "/src/component",
+      "@/hooks": "/src/hooks",
+      "@/request": "/src/request",
+      "@/utils": "/src/utils",
+      "@/api": "/src/api",
+      "@/assets": "/src/assets",
+      "@/store": "/src/store",
     },
   },
 });
