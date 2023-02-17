@@ -1,9 +1,9 @@
 import { ElMessage } from "element-plus";
 import "element-plus/dist/index.css";
-type MessageType = "warning" | "success" | "error" | "message";
+type MessageType = "warning" | "success" | "error" | "info";
 
 interface TipMessage {
-  (message?: string): void;
+  (message?: string, type?: MessageType): void;
 }
 export const timeOutMessage: TipMessage = () => {
   ElMessage({
@@ -14,10 +14,10 @@ export const timeOutMessage: TipMessage = () => {
   });
 };
 
-export const customMessage: TipMessage = (message) => {
+export const customMessage: TipMessage = (message, type) => {
   ElMessage({
     message: message,
-    type: "warning",
+    type: type,
     center: true,
     showClose: true,
   });

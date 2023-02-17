@@ -1,0 +1,29 @@
+{
+  "title": "太大丫丫后台",
+  "navMenu": [
+    {
+      "index": "1",
+      "name": "文章管理",
+      "icon": "menu",
+      "children": [
+        {
+          "index": 1,
+          "name": "新增文章",
+          "path": "AddArticle",
+          "icon": "plus"
+        },
+        {
+          "index": 2,
+          "name": "所有文章",
+          "path": "AllArticle",
+          "icon": "pieChart"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "用户管理",
+      "path": ""
+    }
+  ]
+}

@@ -1,107 +1,134 @@
 <template>
   <el-row class="container">
-    <el-col :span="4" class="nav-left">
-      <NavMenu :navList="navList" :title="title" @handleSelect="handleSelect"></NavMenu>
-    </el-col>
-    <el-col :span="19" class="content-right" :push="1">
-      <el-row v-show="reactiveState.navTablist.length">
-        <NavTab :list="reactiveState.navTablist" @changeTabName="changeTabName" @tabNameRemove="tabNameRemove"
-          :selected="reactiveState.selectTabName"></NavTab>
+    <div class="nav-left">
+      <NavMenu
+        class="nav-menu"
+        :navList="navList"
+        :title="title"
+        @handleSelect="handleSelect"
+      ></NavMenu>
+    </div>
+    <div class="content-right">
+      <!-- 用户信息展示栏 、注销等 -->
+      <el-row class="header"></el-row>
+      <el-row v-show="winList.length">
+        <NavTab
+          :list="winList"
+          @changeTabName="changeTabName"
+          @tabNameRemove="tabNameRemove"
+          :selected="currWin"
+        ></NavTab>
       </el-row>
-      <el-row>
-        <el-col :span="24">
-          <router-view v-slot="{ Component }">
-            <keep-alive :max="10">
-              <component :is="Component" />
-            </keep-alive>
-          </router-view>
-        </el-col>
+      <el-row class="viewWindow">
+        <router-view v-slot="{ Component }">
+          <keep-alive :max="10">
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
       </el-row>
-    </el-col>
+    </div>
   </el-row>
 </template>
 <script setup lang="ts">
-import { onBeforeUnmount, Ref, ref, reactive, toRefs } from "vue";
-import { useRouter } from "vue-router";
-import { NavMenuList, HandleMenuEvent, HandleTabEvent } from "@/type/index";
+import { NavMenuItem, HandleMenuEvent, HandleTabEvent } from "@/type/index";
 import NavMenu from "@/component/nav/NavMenu.vue";
 import NavTab from "@/component/nav/NavTab.vue";
 import { navList, title } from "./index";
-import { useSessionStorage } from "@/hooks/index";
+import { useNavStore, useCurrWinWithRouter } from "@/store/index";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
 
-interface State {
-  selectTabName: string,
-  navTablist: NavMenuList[]
-}
-
+const NavStore = useNavStore();
 const Router = useRouter();
-const keys: number[] = []; // 防止重复添加窗口
-// const selectTabName: Ref<string> = ref(navList[0].name);
+useCurrWinWithRouter(NavStore);
 
-const state: State = {
-  selectTabName: navList[0].name,
-  navTablist: []
+const { winList, currWin, key } = storeToRefs(NavStore);
+
+// 处理导航选择
+const handleSelect: HandleMenuEvent = (index) => {
+  let currTab: NavMenuItem;
+  if (index.includes("-")) {
+    const [start, end] = index.split("-");
+    currTab = navList[Number(start) - 1].children![Number(end) - 1]!;
+  } else {
+    currTab = navList[Number(index) - 1];
+  }
+  // 防止重复添加
+  if (!key.value.includes(currTab.name)) {
+    key.value.push(currTab.name);
+    winList.value.push({
+      name: currTab.name,
+      path: currTab.path!,
+    });
+  }
+  // 修改当前展示窗口
+  currWin.value = currTab.name;
 };
 
-let [newState, removeStorage] = useSessionStorage<State>('HomeStorage', state);
+// 处理 tab 组件修改回调
+const changeTabName: HandleTabEvent = function (winName) {
+  currWin.value = winName;
+};
 
-let reactiveState = reactive(newState);
-
-// 处理窗口页面
-const handleSelect: HandleMenuEvent = (index) => {
-  const currTab: NavMenuList = navList[index];
-  reactiveState.selectTabName = currTab.name;
-  // 防止重复添加
-  if (!keys.includes(index)) {
-    keys.push(index);
-    reactiveState.navTablist.push(currTab);
-    Router.push(currTab.path);
+const handleWinRemove = (nameClose: string, index: number) => {
+  if (index == 0 && currWin.value == nameClose) {
+    key.value.shift();
+    winList.value.shift();
+    currWin.value = winList.value[0].name;
     return;
   }
-  Router.replace(currTab.path);
-};
-
-const changeTab = function (
-  newName: string,
-  callback: (item: NavMenuList, index?: number) => void
-): void {
-  reactiveState.navTablist.forEach((item, index) => {
-    newName === item.name && callback(item, index);
-  });
-};
-
-// 处理 tab 组件回调
-const changeTabName: HandleTabEvent = function (name) {
-  changeTab(name, ({ path }) => {
-    Router.replace(path);
-  });
+  key.value.splice(index, 1);
+  winList.value.splice(index, 1);
+  currWin.value == nameClose && (currWin.value = key.value[index - 1]);
 };
 
 const tabNameRemove: HandleTabEvent = function (name) {
-  changeTab(name, (item, index) => {
-    let targetIndex: number = index! - 1 < 0 ? index! + 1 : index! - 1;
-    const targetTab: NavMenuList = navTablist[targetIndex];
-    Router.replace(targetTab.path);
-    navTablist.splice(index!, 1);
-    keys.splice(index!, 1);
+  // 删除导航栏
+  const len = winList.value.length;
+  if (len == 1) {
+    winList.value = [];
+    key.value = [];
+    return Router.replace("/");
+  }
+  winList.value.forEach((item, index) => {
+    if (item.name === name) {
+      handleWinRemove(name, index);
+    }
   });
 };
-
 </script>
 <style scoped>
 .container {
   width: 100vw;
   height: 100vh;
-  overflow: scroll-y;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
 
-.nav-left {
-  height: 100%;
-  background: #545c64;
+.container .content-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
-
-.content-right,
-.content {
+.el-col,
+.nav-menu {
   height: 100%;
+  width: 100%;
+}
+.header {
+  flex-shrink: 0;
+  width: 100%;
+  height: 50px;
+  background-color: beige;
+}
+/* 显示窗口 */
+.viewWindow {
+  flex: 1;
+  box-sizing: border-box;
+  padding: 20px;
+  overflow: hidden;
 }
 </style>

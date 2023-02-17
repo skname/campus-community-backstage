@@ -11,3 +11,4 @@ const Plugin1 = function ({ store }: PluginContext) {
 Pinia.use(Plugin1);
 export default Pinia;
 export * from "./user";
+export * from "./nav";

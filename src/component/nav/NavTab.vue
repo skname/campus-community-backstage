@@ -1,14 +1,19 @@
 <template>
-  <el-tabs v-model="selected" :closable="true" @tab-change="handleSelected" @tab-remove="handleRemove">
-    <el-tab-pane v-for="item in list" :key="item.id" :label="item.name" :name="item.name">
+  <el-tabs
+    v-model="selected"
+    :closable="true"
+    @tab-change="handleSelected"
+    @tab-remove="handleRemove"
+  >
+    <el-tab-pane v-for="item in list" :label="item.name" :name="item.name">
     </el-tab-pane>
   </el-tabs>
 </template>
 
 <script setup lang="ts">
-import { NavMenuList, HandleTabEvent } from "@/type/index";
+import { HandleTabEvent } from "@/type/index";
 defineProps<{
-  list: NavMenuList[];
+  list: Array<{ name: string; path: string }>;
   selected: string;
 }>();
 

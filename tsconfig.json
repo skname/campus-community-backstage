@@ -9,22 +9,49 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "skipLibCheck": true,
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@": ["src"],
-      "@/*": ["src/*"],
-      "@/type/*": ["src/type/*"],
-      "@/hooks/*": ["src/hooks/*"],
-      "@/request/*": ["src/request/*"],
-      "@/utils/*": ["src/utils/*"],
-      "@/api/*": ["src/api/*"],
-      "@/store/*": ["src/store/*"]
+      "@": [
+        "src"
+      ],
+      "@/*": [
+        "src/*"
+      ],
+      "@/type/*": [
+        "src/type/*"
+      ],
+      "@/hooks/*": [
+        "src/hooks/*"
+      ],
+      "@/request/*": [
+        "src/request/*"
+      ],
+      "@/utils/*": [
+        "src/utils/*"
+      ],
+      "@/api/*": [
+        "src/api/*"
+      ],
+      "@/store/*": [
+        "src/store/*"
+      ],
+      "@/directive/*": [
+        "src/directive/*"
+      ]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -1,25 +1,34 @@
 import { AxiosResponse, AxiosRequestConfig } from "axios";
 import { timeOutMessage } from "@/utils/index";
 import { customMessage } from "@/utils/index";
+// 响应结果类型
+interface ResponseResult {
+  code: number;
+  msg: string;
+  data: Record<string, unknown> | undefined | null;
+}
+// 请求配置
 export const config = {
   baseURL: import.meta.env.VITE_BASE_URL,
   timeout: 8000,
-  headers: {},
+  headers: {
+    "Content-Type": "application/json",
+  },
 };
 
 // 响应拦截器
 export const ResponseInterceptorsResolve = (
-  res: AxiosResponse
+  res: AxiosResponse<ResponseResult>
 ): AxiosResponse => {
-  const { code, message } = res.data;
-  if (code != 200) {
-    customMessage(message);
-  }
+  console.log(res);
+  const { code, msg } = res.data;
+  code == 200 && customMessage(msg, "success");
+  code != 200 && customMessage(msg, "warning");
   return res;
 };
 
 export const ResponseInterceptorsReject = (err: unknown) => {
-  console.warn(err);
+  console.warn("响应超时", err);
   // 响应超时
   timeOutMessage();
 };
